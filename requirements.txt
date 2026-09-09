@@ -1,4 +1,2 @@
 flask
 gunicorn
-pandas==2.0.3
-pandas_ta

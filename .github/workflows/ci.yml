@@ -1,0 +1,49 @@
+name: فحص الكود
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Python checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: تحميل الكود
+        uses: actions/checkout@v4
+
+      - name: تجهيز Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: تثبيت المكتبات
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt
+
+      - name: فحص Syntax لكل ملفات Python
+        run: python -m compileall -q .
+
+      - name: تشغيل Smoke Test للسيرفر
+        shell: bash
+        run: |
+          python main.py > /tmp/ut-bot-pro.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:10000/ > /tmp/ut-bot-pro-response.html; then
+              grep -q "MetaTrader 5 Bot System" /tmp/ut-bot-pro-response.html
+              exit 0
+            fi
+            sleep 1
+          done
+
+          cat /tmp/ut-bot-pro.log
+          exit 1
