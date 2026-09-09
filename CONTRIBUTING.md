@@ -41,7 +41,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-ملحوظة: ملف `requirements.txt` فيه حالياً Flask وGunicorn، وهما المكتبتان المطلوبتان لتشغيل النسخة الحالية. لو أضفت مكتبة جديدة، لازم تضيفها للملف وتختبر إن التثبيت شغال من بيئة Python نظيفة.
+ملحوظة: ملف `requirements.txt` فيه Flask وGunicorn و`pytest`. Flask وGunicorn مطلوبان للتشغيل، و`pytest` مطلوب لتشغيل الاختبارات. لو أضفت مكتبة جديدة، لازم تضيفها للملف وتختبر إن التثبيت شغال من بيئة Python نظيفة.
 
 ## 3. تشغيل المشروع محلياً
 

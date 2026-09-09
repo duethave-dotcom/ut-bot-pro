@@ -30,6 +30,9 @@ jobs:
       - name: فحص Syntax لكل ملفات Python
         run: python -m compileall -q .
 
+      - name: تشغيل Unit Tests
+        run: python -m pytest -q
+
       - name: تشغيل Smoke Test للسيرفر
         shell: bash
         run: |
