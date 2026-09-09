@@ -1,188 +1,188 @@
 # MetaTrader 5 Bot System
 
-ده مشروع Python بسيط مبني باستخدام Flask. النسخة الحالية بتشغّل Web Server وتعرض صفحة حالة للمشروع. المشروع لسه **مش متصل فعلياً بـ MetaTrader 5** ومفيهوش منطق تداول في الوقت الحالي.
+This is a small Python project built with Flask. The current version starts a web server and displays a project status page. It is **not yet connected to MetaTrader 5** and does not currently contain trading logic.
 
-الهدف من الملف ده إن أي مطور جديد يفهم المشروع بسرعة، يشغّله على جهازه، يختبره، ويعمل أول Pull Request من غير ما يتوه.
+This README helps a new developer understand the project, run it locally, test it, and open a first Pull Request.
 
-## المشروع بيعمل إيه؟
+## What does the project do?
 
-لما التطبيق يشتغل، بيفتح endpoint رئيسي على `/`. الصفحة بتعرض إن السيرفر شغال ومستني إعدادات MetaTrader 5.
+When the application starts, it exposes a home endpoint at `/`. The page shows that the server is online and waiting for MetaTrader 5 configuration.
 
-| العنوان | النتيجة المتوقعة |
+| Endpoint | Expected result |
 | --- | --- |
-| `/` | صفحة HTML فيها اسم المشروع وحالته |
-| أي عنوان غير معروف | استجابة `404 Not Found` |
+| `/` | An HTML status page containing the project name and status |
+| Any unknown path | A `404 Not Found` response |
 
-## المتطلبات
+## Requirements
 
-هتحتاج:
+You need:
 
-- Python 3.10 أو أحدث.
+- Python 3.10 or newer.
 - Git.
-- حساب GitHub لو هترفع تغييرات.
+- A GitHub account if you need to push changes.
 
-## تشغيل المشروع على جهازك
+## Run the project locally
 
-نزّل نسخة من المشروع وادخل على مجلده:
+Clone the repository and enter its directory:
 
 ```bash
 git clone https://github.com/duethave-dotcom/ut-bot-pro.git
 cd ut-bot-pro
 ```
 
-اعمل Virtual Environment منفصلة:
+Create a separate virtual environment:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-على Windows:
+On Windows:
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-ثبّت المكتبات:
+Install the dependencies:
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-شغّل السيرفر:
+Start the server:
 
 ```bash
 python main.py
 ```
 
-افتح [http://localhost:10000](http://localhost:10000) في المتصفح.
+Open [http://localhost:10000](http://localhost:10000) in your browser.
 
-التطبيق بيقرأ رقم الـ Port من متغير البيئة `PORT`. لو المتغير مش موجود، بيستخدم `10000` تلقائياً:
+The application reads its port from the `PORT` environment variable. If it is not set, the application uses `10000`:
 
 ```bash
 PORT=5000 python main.py
 ```
 
-في Windows PowerShell:
+On Windows PowerShell:
 
 ```powershell
 $env:PORT = "5000"
 python main.py
 ```
 
-## تشغيل التطبيق باستخدام Gunicorn
+## Run with Gunicorn
 
-للتشغيل بطريقة أقرب لبيئة الإنتاج:
+For a production-style local run:
 
 ```bash
 gunicorn main:app
 ```
 
-## شكل المشروع
+## Project structure
 
 ```text
 ut-bot-pro/
 ├── .github/
-│   ├── pull_request_template.md  # قالب الـ Pull Request
+│   ├── pull_request_template.md  # Pull Request template
 │   └── workflows/
-│       └── ci.yml                # الفحص الأوتوماتيكي على GitHub
+│       └── ci.yml                # GitHub Actions checks
 ├── tests/
-│   └── test_main.py              # اختبارات pytest
-├── CONTRIBUTING.md               # دليل المساهمين والاختبار
-├── README.md                     # الملف اللي إنت بتقرأه
-├── main.py                       # نقطة بداية تطبيق Flask
-└── requirements.txt              # مكتبات Python المطلوبة
+│   └── test_main.py              # pytest tests
+├── CONTRIBUTING.md               # Contributor and testing guide
+├── README.md                     # Project overview and setup guide
+├── main.py                       # Flask application entry point
+└── requirements.txt              # Python dependencies
 ```
 
-### الملفات المهمة
+### Important files
 
-| الملف | وظيفته |
+| File | Purpose |
 | --- | --- |
-| `main.py` | بينشئ تطبيق Flask، وبيعرّف الصفحة الرئيسية، وبيشغّل السيرفر محلياً. |
-| `tests/test_main.py` | بيختبر إن الصفحة الرئيسية شغالة، ومحتواها صحيح، والـ routes غير الموجودة بترجع `404`. |
-| `requirements.txt` | فيه Flask وGunicorn وpytest. |
-| `.github/workflows/ci.yml` | بيشغّل الفحوصات تلقائياً مع كل Pull Request أو Push على `main`. |
-| `CONTRIBUTING.md` | شرح تفصيلي لطريقة الاختبار والمساهمة في المشروع. |
+| `main.py` | Creates the Flask application, defines the home page, and starts the local server. |
+| `tests/test_main.py` | Tests the home page, its content, unknown routes, and port configuration. |
+| `requirements.txt` | Lists Flask, Gunicorn, and pytest. |
+| `.github/workflows/ci.yml` | Runs automated checks for Pull Requests and pushes to `main`. |
+| `CONTRIBUTING.md` | Provides detailed contribution and testing instructions. |
 
-## Unit Tests بـ pytest
+## Unit tests with pytest
 
-الـ Unit Test هو اختبار صغير بيركّز على جزء محدد من الكود. في المشروع ده بنستخدم Flask test client، وده بيسمح لنا نطلب `/` من غير ما نشغّل سيرفر حقيقي على Port.
+A unit test checks one focused part of the code. This project uses Flask's test client, which lets tests request `/` without starting a real server on a port.
 
-شغّل كل الاختبارات بالأمر ده:
+Run all tests with:
 
 ```bash
 python -m pytest -q
 ```
 
-المفروض تشوف نتيجة شبيهة بـ:
+You should see output similar to:
 
 ```text
 5 passed
 ```
 
-كل اختبار في `tests/test_main.py` بيعمل حاجة واحدة واضحة:
+The tests in `tests/test_main.py` cover:
 
-| الاختبار | بيتأكد من إيه؟ |
+| Test | What it verifies |
 | --- | --- |
-| `test_home_returns_successful_response` | إن `/` بترجع Status Code رقم `200`. |
-| `test_home_contains_project_status` | إن الصفحة فيها النصوص الأساسية. |
-| `test_unknown_route_returns_not_found` | إن العنوان غير الموجود بترجع `404`. |
-| `test_port_defaults_to_10000` | إن الـ Port الافتراضي هو `10000`. |
-| `test_port_can_be_read_from_environment` | إن التطبيق يقدر يقرأ Port من البيئة. |
+| `test_home_returns_successful_response` | `/` returns status code `200`. |
+| `test_home_contains_project_status` | The page contains the expected status text. |
+| `test_unknown_route_returns_not_found` | An unknown path returns `404`. |
+| `test_port_defaults_to_10000` | The default port is `10000`. |
+| `test_port_can_be_read_from_environment` | The port can be read from the environment. |
 
-لما تضيف Feature جديدة، حاول تضيف Test يغطي السلوك المتوقع قبل فتح Pull Request. الاختبار الجيد يركّز على نتيجة واحدة، واسمه يشرح هو بيختبر إيه.
+When you add a feature, add a test for its expected behavior before opening a Pull Request. A good test focuses on one result and has a name that explains what it checks.
 
-## GitHub Actions بيعمل إيه؟
+## GitHub Actions
 
-الـ Workflow الموجود في `.github/workflows/ci.yml` بيشتغل تلقائياً عند:
+The workflow in `.github/workflows/ci.yml` runs automatically when:
 
-- عمل Push على فرع `main`.
-- فتح أو تحديث Pull Request هدفها `main`.
+- Code is pushed to `main`.
+- A Pull Request targeting `main` is opened or updated.
 
-الفحص بيعمل الخطوات دي:
+The checks:
 
-1. ينزّل الكود.
-2. يجهّز Python 3.11.
-3. يثبّت المكتبات من `requirements.txt`.
-4. يفحص Syntax ملفات Python.
-5. يشغّل `pytest`.
-6. يشغّل Smoke Test ويتأكد إن السيرفر بيرد.
+1. Check out the code.
+2. Set up Python 3.11.
+3. Install dependencies from `requirements.txt`.
+4. Check Python syntax.
+5. Run `pytest`.
+6. Run a smoke test to confirm that the server responds.
 
-لو أي خطوة فشلت، افتح تبويب **Actions** في GitHub واقرأ الـ Logs قبل الدمج.
+If a check fails, open the **Actions** tab in GitHub and review the logs before merging.
 
-## إنشاء Branch جديد وفتحه كـ Pull Request
+## Create a branch and open a Pull Request
 
-### 1. حدّث `main`
+### 1. Update `main`
 
 ```bash
 git checkout main
 git pull origin main
 ```
 
-### 2. اعمل Branch جديد
+### 2. Create a branch
 
-اختار اسم واضح، مثلاً:
+Use a clear name, for example:
 
 ```bash
 git checkout -b feature/add-home-test
 ```
 
-تقدر تتأكد إنك على الفرع الصح:
+Confirm that you are on the correct branch:
 
 ```bash
 git branch --show-current
 ```
 
-المفروض يطبع:
+The command should print:
 
 ```text
 feature/add-home-test
 ```
 
-### 3. عدّل واختبر
+### 3. Make changes and test them
 
-بعد ما تعدّل الكود أو تضيف Test، شغّل:
+After changing the code or adding a test, run:
 
 ```bash
 python -m pytest -q
@@ -190,57 +190,57 @@ python -m compileall -q .
 git diff --check
 ```
 
-### 4. اعمل Commit
+### 4. Create a commit
 
-راجع الملفات الأول:
+Review the files first:
 
 ```bash
 git status
 git diff
 ```
 
-بعدها أضف الملفات واعمل Commit:
+Then add the files and create a commit:
 
 ```bash
 git add .
 git commit -m "Add homepage unit tests"
 ```
 
-اكتب رسالة Commit قصيرة وواضحة، وتشرح التغيير مش كل التفاصيل.
+Keep the commit message short and specific.
 
-### 5. اربط الـ Branch بـ GitHub
+### 5. Push the branch to GitHub
 
-أول مرة ترفع الفرع استخدم:
+The first time you push the branch, run:
 
 ```bash
 git push -u origin feature/add-home-test
 ```
 
-الخيار `-u` بيربط الفرع المحلي بالفرع اللي على GitHub. بعد كده تقدر تستخدم `git push` بس.
+The `-u` option links the local branch to the GitHub branch. After that, you can use `git push` by itself.
 
-### 6. افتح Pull Request
+### 6. Open the Pull Request
 
-بعد نجاح الـ Push:
+After the push:
 
-1. افتح صفحة الريبو على GitHub.
-2. اضغط **Compare & pull request**.
-3. خلّي الـ Base branch هو `main`.
-4. اختار الـ Compare branch بتاعك، مثل `feature/add-home-test`.
-5. اكتب ملخص التغيير.
-6. اكتب أوامر الاختبار ونتيجتها.
-7. راجع الـ Checklist الموجود في قالب الـ Pull Request.
-8. اضغط **Create pull request**.
+1. Open the repository on GitHub.
+2. Click **Compare & pull request**.
+3. Set the base branch to `main`.
+4. Select your branch as the compare branch.
+5. Write a summary of the change.
+6. List the test commands and their results.
+7. Complete the Pull Request checklist.
+8. Click **Create pull request**.
 
-بعد فتح الـ PR، استنى GitHub Actions يخلص. لو الفحص أخضر، اطلب من المراجع يراجع التغيير. لو الفحص أحمر، أصلح المشكلة على نفس الـ Branch واعمل Push جديد؛ الـ PR هيتحدّث تلقائياً.
+After opening the PR, wait for GitHub Actions to finish. If the checks pass, request a review. If they fail, fix the problem on the same branch and push again; the PR updates automatically.
 
-## مثال لو أول Pull Request ليك
+## Example: a first Pull Request
 
 ```bash
 git checkout main
 git pull origin main
 git checkout -b test/add-homepage-tests
 
-# عدّل أو أضف الملفات هنا
+# Make or edit files here
 python -m pytest -q
 python -m compileall -q .
 git diff --check
@@ -250,15 +250,15 @@ git commit -m "Add pytest coverage for homepage"
 git push -u origin test/add-homepage-tests
 ```
 
-بعد آخر أمر، افتح الرابط أو زر **Compare & pull request** اللي GitHub هيظهره لك.
+After the last command, open the URL shown by GitHub or click **Compare & pull request**.
 
-## قواعد بسيطة للمساهمة
+## Contribution rules
 
-- ما ترفعش كلمات سر أو مفاتيح API أو ملفات `.env`.
-- خليك محدد: كل Pull Request يفضل يعالج موضوع واحد.
-- أي Feature جديدة يفضل يكون معاها Test.
-- لو ضفت مكتبة، حدّث `requirements.txt` واختبر التثبيت من بيئة نظيفة.
-- اكتب في الـ PR إيه اللي اتغير، وإزاي اختبرته، وهل فيه حاجة لسه ناقصة.
-- ما تدمجش PR لو GitHub Actions فاشل إلا لو سبب الفشل معروف ومش متعلق بالتغيير، واكتب السبب بوضوح.
+- Do not commit passwords, API keys, or `.env` files.
+- Keep each Pull Request focused on one topic.
+- Add a test for every new feature when practical.
+- If you add a dependency, update `requirements.txt` and test installation in a clean environment.
+- Explain what changed, how you tested it, and what remains in the Pull Request.
+- Do not merge while GitHub Actions is failing unless the failure is understood, unrelated, and documented.
 
-للتفاصيل الإضافية، راجع [دليل المساهمين](CONTRIBUTING.md).
+For more details, read the [contributor guide](CONTRIBUTING.md).

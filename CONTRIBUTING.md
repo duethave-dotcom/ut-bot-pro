@@ -1,157 +1,132 @@
-# دليل البداية للمساهمين الجدد
+# Contributor Guide
 
-أهلاً بيك في مشروع **MetaTrader 5 Bot System**. المشروع حالياً نسخة أولية جداً: عبارة عن سيرفر Flask بسيط بيعرض صفحة حالة، ولسه مستني إضافة إعدادات وربط MetaTrader 5.
+Welcome to **MetaTrader 5 Bot System**. The project is currently a small Flask server that displays a status page. MetaTrader 5 configuration and trading logic have not been implemented yet.
 
-الملف ده يشرح لك تبدأ إزاي، الملفات المهمة فين، وإيه خطوات التعديل ورفع التغييرات على GitHub.
+This guide explains how to set up the project, understand the important files, test changes, and open a Pull Request.
 
-## 1. قبل ما تبدأ
+## 1. Before you start
 
-هتحتاج على جهازك:
+You need:
 
-- Python 3.10 أو أحدث.
+- Python 3.10 or newer.
 - Git.
-- حساب GitHub عنده صلاحية يرفع تغييرات على الريبو، أو Fork لو معندكش الصلاحية.
+- A GitHub account with permission to push to the repository, or a fork if you do not have permission.
 
-## 2. تجهيز نسخة محلية من المشروع
+## 2. Set up a local copy
 
-من الـ Terminal نفّذ:
+Run:
 
 ```bash
 git clone https://github.com/duethave-dotcom/ut-bot-pro.git
 cd ut-bot-pro
 ```
 
-الأفضل تعمل بيئة Python منفصلة للمشروع عشان المكتبات دي ما تلخبطش مكتبات مشاريع تانية:
+Create a virtual environment so the project dependencies do not affect other Python projects:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-على Windows استخدم:
+On Windows:
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-بعد كده ثبّت الاعتمادات:
+Install the dependencies:
 
 ```bash
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-ملحوظة: ملف `requirements.txt` فيه Flask وGunicorn و`pytest`. Flask وGunicorn مطلوبان للتشغيل، و`pytest` مطلوب لتشغيل الاختبارات. لو أضفت مكتبة جديدة، لازم تضيفها للملف وتختبر إن التثبيت شغال من بيئة Python نظيفة.
+The current `requirements.txt` contains Flask, Gunicorn, and `pytest`. Flask and Gunicorn support the application, while pytest runs the tests. If you add a dependency, add it to this file and test installation in a clean virtual environment.
 
-## 3. تشغيل المشروع محلياً
+## 3. Run the project locally
 
-شغّل التطبيق مباشرة:
+Start the application:
 
 ```bash
 python main.py
 ```
 
-بعد التشغيل افتح [http://localhost:10000](http://localhost:10000) في المتصفح. التطبيق بيستخدم المنفذ الموجود في متغير البيئة `PORT`، ولو المتغير مش موجود بيستخدم `10000` تلقائياً.
+Open [http://localhost:10000](http://localhost:10000). The application reads the port from the `PORT` environment variable and defaults to `10000`.
 
-لتشغيله بمنفذ مختلف:
+To use another port:
 
 ```bash
 PORT=5000 python main.py
 ```
 
-للتشغيل بطريقة أقرب لبيئة الإنتاج، استخدم Gunicorn:
+For a production-style local run, use Gunicorn:
 
 ```bash
 gunicorn main:app
 ```
 
-## 4. شكل المشروع
+## 4. Project structure
 
-المشروع صغير حالياً، وملفاته الأساسية هي:
-
-| الملف | بيعمل إيه؟ |
+| File | Purpose |
 | --- | --- |
-| `main.py` | نقطة بداية التطبيق. بينشئ Flask app، ويعرّف الصفحة الرئيسية `/`، وبيشغّل السيرفر محلياً. |
-| `requirements.txt` | قائمة مكتبات Python المطلوبة لتشغيل المشروع. |
-| `CONTRIBUTING.md` | الدليل ده، وبيشرح للمساهمين يبدأوا ويشتغلوا إزاي. |
-| `.github/pull_request_template.md` | قالب بيتفتح تلقائياً لما تعمل Pull Request، عشان تكتب الملخص والاختبارات والـ checklist. |
-| `.github/workflows/ci.yml` | فحص أوتوماتيكي بيشتغل مع كل Push على `main` وكل Pull Request عليها. |
-| `.venv/` | بيئة Python محلية. ما ترفعهاش على GitHub. |
+| `main.py` | Application entry point. Creates the Flask app, defines `/`, and starts the local server. |
+| `requirements.txt` | Lists the Python dependencies. |
+| `README.md` | Project overview, setup, testing, and Git workflow. |
+| `CONTRIBUTING.md` | This contributor guide. |
+| `.github/pull_request_template.md` | Template automatically used for Pull Requests. |
+| `.github/workflows/ci.yml` | Automated checks for pushes and Pull Requests targeting `main`. |
+| `tests/test_main.py` | pytest unit tests. |
+| `.venv/` | Local Python environment; do not commit it. |
 
-مفيش حالياً مجلدات منفصلة للـ routes أو الخدمات أو الاختبارات. لما المشروع يكبر، الأفضل نفصل الأجزاء دي بدل ما نحط كل المنطق في `main.py`.
+The project does not currently have separate route, service, or test modules beyond the files listed above. As the application grows, keep related logic in focused modules instead of putting everything in `main.py`.
 
-## 5. أهم أجزاء `main.py`
+## 5. Important parts of `main.py`
 
-- `app = Flask(__name__)`: بينشئ تطبيق Flask.
-- `@app.route('/')`: بيربط العنوان الرئيسي `/` بالدالة `home`.
-- `home()`: بترجع صفحة HTML بسيطة بتعرض إن الخدمة شغالة.
-- `os.environ.get('PORT', 10000)`: بيقرأ المنفذ من البيئة، وبيستخدم `10000` كقيمة افتراضية.
-- `app.run(host='0.0.0.0', port=port)`: بيشغّل السيرفر بحيث يقدر يستقبل اتصالات من خارج الجهاز عند الحاجة.
+- `app = Flask(__name__)` creates the Flask application.
+- `@app.route('/')` maps the home URL to the `home` function.
+- `home()` returns the HTML status page.
+- `os.environ.get('PORT', 10000)` reads the port from the environment and falls back to `10000`.
+- `app.run(host='0.0.0.0', port=port)` starts the local server.
 
-التعليقات الموجودة في الكود باللهجة المصرية. لو هتضيف كود جديد، خليك واضح وثابت في أسلوب التعليقات، ومتكتبش أسرار أو مفاتيح API داخل الملف.
+Do not put passwords, API keys, or other secrets in source files.
 
-## 6. طريقة الشغل المقترحة
+## 6. Test code before opening a Pull Request
 
-قبل ما تعدّل، حدّث الفرع الرئيسي:
+Run these checks before pushing a Pull Request.
 
-```bash
-git checkout main
-git pull origin main
-```
-
-اعمل فرع خاص بالتغيير بتاعك:
+### Run unit tests
 
 ```bash
-git checkout -b feature/اسم-التغيير
+python -m pytest -q
 ```
 
-بعد التعديل، شغّل التطبيق وتأكد إن الصفحة الرئيسية بتفتح:
+The current suite checks the home page response, expected page content, unknown routes, and port configuration. All tests should pass before you open the PR.
 
-```bash
-python main.py
-```
-
-وفي Terminal تاني اختبر الاستجابة:
-
-```bash
-curl http://localhost:10000/
-```
-
-## 6. اختبار الكود قبل الـ Pull Request
-
-قبل ما ترفع Pull Request، اعمل الفحوصات دي بالترتيب:
-
-### أ. افحص Syntax الكود
-
-الأمر ده بيتأكد إن ملفات Python مفيهاش أخطاء كتابة أو أقواس ناقصة:
+### Check Python syntax
 
 ```bash
 python -m compileall -q .
 ```
 
-لو الأمر خلص من غير أي رسالة خطأ، فده معناه إن فحص الـ Syntax عدى. لو ظهر Error، افتح الملف ورقم السطر اللي ظهر في الرسالة وعدّل المشكلة ثم شغّل الأمر تاني.
+This catches syntax errors such as invalid indentation or missing brackets.
 
-### ب. شغّل التطبيق
+### Run the application smoke test manually
 
-في Terminal شغّل:
+In one terminal:
 
 ```bash
 python main.py
 ```
 
-سيب السيرفر شغال وافتح Terminal تاني، ثم نفّذ:
+In a second terminal:
 
 ```bash
 curl --fail http://127.0.0.1:10000/
 ```
 
-المفروض يرجّع HTML فيها `MetaTrader 5 Bot System` وحالة `Online & Live`. كده اتأكدنا إن السيرفر بدأ وإن الصفحة الرئيسية بترد.
+The response should contain `MetaTrader 5 Bot System` and `Online & Live`. Stop the server with `Ctrl+C` when you finish.
 
-بعد ما تخلص، اقفل السيرفر بالضغط على `Ctrl+C` في الـ Terminal الأول.
-
-### ج. راجع التغييرات
-
-استخدم الأوامر دي قبل الـ commit:
+### Review the diff
 
 ```bash
 git status
@@ -159,53 +134,63 @@ git diff --check
 git diff
 ```
 
-`git diff --check` بيدوّر على مسافات أو مشاكل تنسيق غير مقصودة. راجع `git diff` بنفسك وتأكد إنك ما ضفتش ملفات سرية أو تغييرات ملهاش علاقة بالطلب.
+Make sure the diff contains only the intended changes and no secret files.
 
-### د. إيه اللي بيحصل على GitHub؟
+### What GitHub checks automatically
 
-الملف `.github/workflows/ci.yml` بيشغّل نفس الفحوصات تلقائياً على GitHub Actions عند فتح أو تحديث Pull Request. الـ Workflow بيعمل الآتي:
+`.github/workflows/ci.yml` runs when a Pull Request targeting `main` is opened or updated. It:
 
-1. ينزّل الكود.
-2. يجهّز Python 3.11.
-3. يثبّت المكتبات من `requirements.txt`.
-4. يفحص Syntax كل ملفات Python.
-5. يشغّل السيرفر ويتأكد إن الصفحة الرئيسية بترد بالمحتوى المتوقع.
+1. Checks out the code.
+2. Sets up Python 3.11.
+3. Installs dependencies from `requirements.txt`.
+4. Checks Python syntax.
+5. Runs the pytest suite.
+6. Starts the server and verifies the home page response.
 
-لو الفحص فشل، افتح تبويب **Actions** في GitHub، اختار التشغيل الفاشل، واقرأ أول رسالة Error واضحة في الـ Logs. ما تدمجش Pull Request قبل ما الفحص يعدّي أو تشرح سبب الفشل للمراجعين.
+If a check fails, open the failed run in the **Actions** tab and read the logs. Do not merge until the failure is fixed or clearly explained.
 
-راجع التغيير، ثم اعمل commit واضح:
+## 7. Recommended contribution workflow
+
+Update the main branch before starting:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+Create a branch for your change:
+
+```bash
+git checkout -b feature/your-change
+```
+
+After making and testing the change, review and commit it:
 
 ```bash
 git status
 git diff
-git add main.py requirements.txt CONTRIBUTING.md
-git commit -m "Add contributor onboarding guide"
+git add .
+git commit -m "Describe the change briefly"
 ```
 
-ارفع الفرع على GitHub:
+Push the branch:
 
 ```bash
-git push -u origin feature/اسم-التغيير
+git push -u origin feature/your-change
 ```
 
-بعدها افتح Pull Request من GitHub. في وصف الـ Pull Request اكتب باختصار:
+Then open a Pull Request on GitHub. Explain what changed, why it was needed, how you tested it, and whether any work remains.
 
-1. إيه اللي اتغير.
-2. ليه التغيير مطلوب.
-3. إزاي اختبرت التغيير.
-4. هل فيه حاجة لسه محتاجة شغل.
+## 8. Contribution rules
 
-## 7. قواعد مهمة
+- Do not commit secrets, credentials, or local environment files.
+- Keep each Pull Request focused.
+- Update `requirements.txt` when adding a dependency.
+- Document new endpoints and explain how to test them.
+- Preserve support for the `PORT` environment variable.
+- Add or update tests when behavior changes.
+- Confirm that the application starts and `/` returns a successful response.
 
-- ما ترفعش ملفات الأسرار أو مفاتيح الدخول أو ملفات البيئة المحلية.
-- ما تعملش تغييرات كبيرة في نفس الـ Pull Request من غير ما تشرحها.
-- حافظ على توافق التطبيق مع متغير `PORT` لأن بيئة الاستضافة بتحدده من الخارج.
-- لو أضفت مكتبة جديدة، ضيفها إلى `requirements.txt`.
-- لو أضفت endpoint جديد، اكتب طريقة اختباره في وصف الـ Pull Request.
-- قبل الدمج، اتأكد إن التطبيق بيبدأ من غير أخطاء وإن `/` بترجع استجابة ناجحة.
+## 9. Current project status
 
-## 8. الوضع الحالي للمشروع
-
-النسخة الحالية لا تحتوي بعد على منطق تداول أو اتصال فعلي بـ MetaTrader 5. أي مساهمة تضيف هذه الوظائف لازم توضّح إعدادات الاتصال، طريقة حماية بيانات الدخول، وسلوك الفشل قبل اعتمادها.
-
-لو مش متأكد من مكان التعديل، ابدأ بفتح `main.py` واقرأ الدالة أو الـ route الأقرب للمشكلة، ثم افتح Issue أو اكتب ملاحظتك في Pull Request بدل ما تضيف سلوك غير موثّق.
+The current version does not contain trading logic or a real MetaTrader 5 connection. Any contribution that adds these capabilities must document connection settings, credential protection, error handling, and tests before it is reviewed.

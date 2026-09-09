@@ -1,45 +1,45 @@
-## ملخص التغيير
+## Summary
 
-اكتب هنا باختصار إيه اللي اتغير وليه.
+Briefly describe what changed and why.
 
-## نوع التغيير
+## Type of change
 
-- [ ] إصلاح Bug
-- [ ] إضافة Feature
-- [ ] تحسين أو Refactor
-- [ ] تحديث Documentation
-- [ ] تغيير في إعدادات المشروع أو CI
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor or improvement
+- [ ] Documentation update
+- [ ] Project or CI configuration change
 
-## الاختبارات
+## Testing
 
-اشرح الاختبارات اللي عملتها، واكتب الأوامر اللي شغّلتها ونتيجتها:
+List the commands you ran and their results:
 
 ```text
-# مثال:
-python3 -m py_compile main.py
-curl http://localhost:10000/
+# Example:
+python -m pytest -q
+python -m compileall -q .
 ```
 
-النتيجة:
+Result:
 
 ```text
-اكتب النتيجة هنا
+Write the result here.
 ```
 
 ## Checklist
 
-- [ ] الكود بيشتغل محلياً من غير أخطاء.
-- [ ] شغّلت الفحص الأوتوماتيكي أو الاختبارات المناسبة.
-- [ ] راجعت `git diff` وتأكدت إن مفيش ملفات أو تغييرات غير مقصودة.
-- [ ] ما ضفتش مفاتيح API أو كلمات سر أو بيانات حساسة.
-- [ ] حدّثت `requirements.txt` لو ضفت مكتبة جديدة.
-- [ ] حدّثت الـ Documentation لو التغيير محتاج شرح.
-- [ ] التغيير ده جاهز للمراجعة ومفيش TODOs مهمة مستخبية.
+- [ ] The code runs locally without errors.
+- [ ] I ran the relevant tests and automated checks.
+- [ ] I reviewed `git diff` and confirmed there are no unintended changes.
+- [ ] I did not add API keys, passwords, or other sensitive data.
+- [ ] I updated `requirements.txt` if I added a dependency.
+- [ ] I updated the documentation if the change needs explanation.
+- [ ] This Pull Request is ready for review and has no important hidden TODOs.
 
-## ملاحظات للمراجع
+## Notes for reviewers
 
-اكتب أي حاجة تساعد المراجع يفهم التغيير أو يختبره، مثل إعدادات خاصة أو قرارات تصميم.
+Add setup details, design decisions, or anything that helps reviewers understand or test the change.
 
-## Screenshots أو Logs
+## Screenshots or logs
 
-لو التغيير له علاقة بالواجهة أو بيطلع Output مهم، أضف Screenshot أو Logs هنا. لو مش محتاج، اكتب: `غير مطلوب`.
+If the change affects the UI or produces useful output, add screenshots or logs here. Otherwise write: `Not applicable`.
